@@ -16,7 +16,6 @@ def getNormializedData(inputfile ,OutputFile,FeatureIndex,flag=True ,maxV=None ,
 	info=dataframe.values
 	Output =info 
 	if flag:
-		print("HERE!")
 		maxV = np.zeros((1,info.shape[1]))
 		minV = np.zeros((1,info.shape[1]))
 		for i in range(FeatureIndex,info.shape[1]):
