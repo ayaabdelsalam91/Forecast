@@ -12,11 +12,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="testfile" pinned="false" current-in-tab="true">
+      <file leaf-file-name="testfile" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Forecasting_DataModel3/testfile">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="10" lean-forward="false" selection-start-line="0" selection-start-column="10" selection-end-line="0" selection-end-column="10" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="testfile.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/testfile.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -33,6 +43,7 @@
         <option value="$PROJECT_DIR$/Forecasting_DataModel3/GenerateInputsElec.py" />
         <option value="$PROJECT_DIR$/Forecasting_DataModel3/GenerateInputs.py" />
         <option value="$PROJECT_DIR$/Forecasting_DataModel3/testfile" />
+        <option value="$PROJECT_DIR$/testfile.txt" />
       </list>
     </option>
   </component>
@@ -273,6 +284,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="10" lean-forward="false" selection-start-line="0" selection-start-column="10" selection-end-line="0" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testfile.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
           <folding />
         </state>
       </provider>
