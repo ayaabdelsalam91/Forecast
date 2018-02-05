@@ -37,9 +37,8 @@ def getNums():
             ,[np.std(arr1),np.std(arr2),np.std(arr3),np.std(arr4)]
 
 def getInputs():
-    means,stds = getNums()
     print("opening file")
-    myfile = open('./Data/TrainingElectrictyDS.csv','r')
+    myfile = open('../Data/TrainingDS.csv','r')
     lines = []
     i = 0
     print("got here.elec1")
@@ -57,36 +56,71 @@ def getInputs():
         t1,t2,t3 = [],[],[]
         arr2 = lines[i]
         arr = arr2[:-1]
-        zeroIdx = getZeroIndex(arr)
 
 
         j = 0
         while j < len(arr):
-            if j >= zeroIdx:
-                inputElec.append(arr[j])
-                f1.append(arr[j + 1])
-                f2.append(arr[j + 2])
-                f3.append(arr[j + 3])
-            else:
-                inputElec.append((arr[j] - means[0]) / stds[0])
-                f1.append((arr[j + 1] - means[1]) / stds[1])
-                f2.append((arr[j + 2] - means[2]) / stds[2])
-                f3.append((arr[j + 3] - means[3]) / stds[3])
-            j += 4
+            inputElec.append(arr[j])
 
-        if zeroIdx != 516:
-            nextArr = lines[i+1][:-1]
-            t1.append((nextArr[zeroIdx + 1] - means[1]) / stds[1])
-            t2.append((nextArr[zeroIdx + 2] - means[2]) / stds[2])
-            t3.append((nextArr[zeroIdx + 3] - means[3]) / stds[3])
+            #add one hot vector for month to input of each feature
+            f1.append(arr[j + 1])
+            f1.append(arr[j + 2])
+            f1.append(arr[j + 3])
+            f1.append(arr[j + 4])
+            f1.append(arr[j + 5])
+            f1.append(arr[j + 6])
+            f1.append(arr[j + 7])
+            f1.append(arr[j + 8])
+            f1.append(arr[j + 9])
+            f1.append(arr[j + 10])
+            f1.append(arr[j + 11])
+            f1.append(arr[j + 12])
+            #add the feature itself
+            f1.append(arr[j + 13])
+
+            f2.append(arr[j + 1])
+            f2.append(arr[j + 2])
+            f2.append(arr[j + 3])
+            f2.append(arr[j + 4])
+            f2.append(arr[j + 5])
+            f2.append(arr[j + 6])
+            f2.append(arr[j + 7])
+            f2.append(arr[j + 8])
+            f2.append(arr[j + 9])
+            f2.append(arr[j + 10])
+            f2.append(arr[j + 11])
+            f2.append(arr[j + 12])
+            #
+            f2.append(arr[j + 14])
+
+            f3.append(arr[j + 1])
+            f3.append(arr[j + 2])
+            f3.append(arr[j + 3])
+            f3.append(arr[j + 4])
+            f3.append(arr[j + 5])
+            f3.append(arr[j + 6])
+            f3.append(arr[j + 7])
+            f3.append(arr[j + 8])
+            f3.append(arr[j + 9])
+            f3.append(arr[j + 10])
+            f3.append(arr[j + 11])
+            f3.append(arr[j + 12])
+            #
+            f3.append(arr[j + 15])
+            j += 16
+
+        if i != len(lines)-1:
+            t1.append(lines[i+1][j+13])
+            t2.append(lines[i+1][j+14])
+            t3.append(lines[i+1][j+15])
         else:
-            t1.append((arr[zeroIdx - 3] - means[3]) / stds[3])
-            t2.append((arr[zeroIdx - 2] - means[2]) / stds[2])
-            t3.append((arr[zeroIdx - 1] - means[1]) / stds[1])
+            t1.append(lines[i][j + 13])
+            t2.append(lines[i][j + 14])
+            t3.append(lines[i][j + 15])
 
         inputs.append([inputElec, f1, f2, f3])
         toadd = float(arr2[-1])
-        toadd = [(toadd - means[0]) / stds[0]]
+        toadd = [(toadd)]
         targets.append([toadd, t1, t2, t3])
 
         i += 1
@@ -94,5 +128,5 @@ def getInputs():
 
 
 
-#vals,targets = getInputs()
+vals,targets = getInputs()
 #print(retval[0],retval[1])
