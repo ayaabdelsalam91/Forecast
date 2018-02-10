@@ -5,16 +5,23 @@ import torch.nn.functional as F
 import torch.optim as optim
 import GenerateInputsElec
 import inspect
+import time
+import sys
+sys.path.append('../Forecasting_DataModel2/Code/')
+import Bias
+import numpy as np
 
 
 useGPU = False
-SAVEPATH = './modelElec.pth'
+SAVEPATH = './modelElecK3.pth'
+
+kmeansModel = Bias.kMeanBias_("TrainingDS",3,104,16,hasMonth=True)[2]
 
 print(torch.cuda.is_available())
-class modelLSTMElec(nn.Module):
+class modelLSTMElecBias(nn.Module):
 
     def __init__(self,input_size, hidden_dim, num_layers):
-        super(modelLSTMElec, self).__init__()
+        super(modelLSTMElecBias, self).__init__()
 
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
@@ -40,12 +47,22 @@ class modelLSTMElec(nn.Module):
                     autograd.Variable(torch.zeros(self.num_layers, 1, self.hidden_dim)))
 
     def forward(self, input):
+        for i in range(104):
+            if not isinstance(input[0],autograd.Variable):
+                vals = np.array([float(input[0][i][0]),
+                        float(input[1][i][0]),
+                        float(input[2][i][0]),
+                        float(input[3][i][0])])
+                currCenter = Bias.getOneCenter_(vals,kmeansModel)
+                input[0][i].append(currCenter[0][0])
+                input[1][i].append(currCenter[0][1])
+                input[2][i].append(currCenter[0][2])
+                input[3][i].append(currCenter[0][3])
+
         i = 0
-
-
         while i < len(input):
             if not isinstance(input[i],autograd.Variable):
-                input[i] = autograd.Variable(torch.FloatTensor(input[i])).view(104,1,-1)
+                input[i] = autograd.Variable(torch.FloatTensor(input[i])).view(-1,1,14)
             i += 1
 
         lstm1hidden = self.init_hidden()
@@ -53,6 +70,7 @@ class modelLSTMElec(nn.Module):
         lstm3hidden = self.init_hidden()
         lstmMainhidden = self.init_hidden()
 
+        i = 0
         for i in range(104):
             if float(input[0][i].data[0][0]) == 0.0:
                 break
@@ -110,12 +128,11 @@ class modelLSTMElec(nn.Module):
 
 
 if useGPU:
-    model = modelLSTMElec(13, 32, 2).cuda()
+    model = modelLSTMElecBias(14, 32, 2).cuda()
 else:
-    model = modelLSTMElec(13, 32, 2)
+    model = modelLSTMElecBias(14, 32, 2)
 inputs,targets = GenerateInputsElec.getInputs()
 optimizer = optim.SGD(model.parameters(), lr=0.1)
-
 
 
 def train():
@@ -152,5 +169,9 @@ def train():
         first=False
         torch.save(model, SAVEPATH)
         print("epoch #"+str(epoch)+" loss = "+str(epochLoss/len(inputs)))
+    timestr = time.strftime("%Y%m%d-%H_%M_%S")
+    torch.save(model, "./FinalModels/modelElecFinal"+timestr+".pth")
 
-#train()
+def run():
+    print("started training")
+    train()

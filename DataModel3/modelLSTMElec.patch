@@ -1,0 +1,11 @@
+--- C:/PythonProj/Forecast/DataModel3/elecLSTM.py
++++ C:/PythonProj/Forecast/DataModel3/elecLSTM.py
+@@ -32,7 +32,7 @@
+ 
+         while i < len(input):
+             if not isinstance(input[i],autograd.Variable):
+-                input[i] = autograd.Variable(torch.FloatTensor(input[i])).view(104,1,-1)
++                input[i] = autograd.Variable(torch.FloatTensor(input[i])).view(-1,1,13)
+             i += 1
+ 
+         lstm1hidden = self.init_hidden()

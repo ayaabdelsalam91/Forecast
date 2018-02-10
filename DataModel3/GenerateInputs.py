@@ -11,7 +11,7 @@ def getInputs():
     myfile = open('./LSTMDataVentriclesForecastLeaderBoardTrainParsed.csv','r')
     lines = []
     i = 0
-    print("got here1")
+    print("got here1.vent")
     for line in myfile:
         if i == 0:
             i += 1
