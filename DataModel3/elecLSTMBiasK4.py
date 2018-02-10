@@ -13,9 +13,9 @@ import numpy as np
 
 
 useGPU = False
-SAVEPATH = './modelElecK3.pth'
+SAVEPATH = './modelElecK4.pth'
 
-kmeansModel = Bias.kMeanBias_("TrainingDS",3,104,16,hasMonth=True)[2]
+kmeansModel = Bias.kMeanBias_("TrainingDS",4,104,16,hasMonth=True)[2]
 
 print(torch.cuda.is_available())
 class modelLSTMElec(nn.Module):
@@ -142,11 +142,7 @@ def train():
         while i < len(inputs):
             model.zero_grad()
             model.zero_all_lstm_grads()
-
-            if i % 10 == 0:
-                print(i)
-
-
+            
             input1 = inputs[i]
             currentTargets = targets[i]
             if first:
@@ -169,7 +165,7 @@ def train():
         torch.save(model, SAVEPATH)
         print("epoch #"+str(epoch)+" loss = "+str(epochLoss/len(inputs)))
     timestr = time.strftime("%Y%m%d-%H_%M_%S")
-    torch.save(model, "./FinalModels/modelElecK3"+timestr+".pth")
+    torch.save(model, "./FinalModels/modelElecK4"+timestr+".pth")
 
 def run():
     print("started training")

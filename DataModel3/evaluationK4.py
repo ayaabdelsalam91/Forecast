@@ -1,5 +1,5 @@
 import torch
-from elecLSTMBias import modelLSTMElec
+from elecLSTMBiasK4 import modelLSTMElec
 import sys
 sys.path.append('../Forecasting_DataModel2/Code/')
 import Bias
@@ -43,9 +43,9 @@ def getInputs():
         i += 1
     return inputs
 
-model = torch.load('./FinalModels/modelElecK3.pth')
+model = torch.load('./modelElecK4.pth')
 arr = getInputs()
-kmeansModel = Bias.kMeanBias_("TrainingDS",3,104,16,hasMonth=True)[2]
+kmeansModel = Bias.kMeanBias_("TrainingDS",4,104,16,hasMonth=True)[2]
 
 months = [  [0,0,0,0,0,0,0,0,0,0,0,1],
             [1,0,0,0,0,0,0,0,0,0,0,0],
@@ -105,6 +105,6 @@ for i in range(len(arr)):
 
 ansMat = np.loadtxt(open("../Forecasting_DataModel2/Data/TestingAnsDS.csv", "rb"), delimiter=",", skiprows=1)
 residualMatrix = np.abs(ansMat-matElec)
-np.savetxt("BiasK3Errors.csv",X=residualMatrix,delimiter=",",newline="\n")
+np.savetxt("BiasK4Errors.csv",X=residualMatrix,delimiter=",",newline="\n")
 
 
