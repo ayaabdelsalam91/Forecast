@@ -142,7 +142,7 @@ def train():
         while i < len(inputs):
             model.zero_grad()
             model.zero_all_lstm_grads()
-            
+
             input1 = inputs[i]
             currentTargets = targets[i]
             if first:
