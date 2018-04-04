@@ -119,79 +119,33 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 	with tf.Session() as sess:
 		init.run()
 		for epoch in range(n_epochs):
-			# # print (X_.shape,Y_.shape , Trainseq_length.shape)
-			# X_, Y_ = unison_shuffled_copies(X_,Y_)
-
-			X_ , Y_,Trainseq_length = unison_shuffled_copies_Correct(X_,Y_ ,Trainseq_length )
+			#Commented Shuffling because we want to reserve the order for now
+			#X_ , Y_,Trainseq_length = unison_shuffled_copies_Correct(X_,Y_ ,Trainseq_length )
 
 			sess.run(training_op, feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:trainKeepProb})
 			acc_train = accuracy.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
 			y_Last_ = y_Last.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
 			outputs_Last_ = outputs_Last.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
-			# printstuff(y_Last_ ,  outputs_Last_)
-			if DS ==1:
-				MAE_values = MAE.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
-				interval_25 , interval_75 = get_interval(MAE_values)
-
 			print("Epoch", epoch, "Train MAE =", '{0:.20f}'.format(acc_train) )
 		saver.save(sess, Model_Loc+OutputFile +"LSTM_model")
 		if testing:
-			if DS ==1:
-				Output = np.zeros((TestData.shape[0]*50, 2))
-				for i in range(TestData.shape[0]):
-						seq = np.array([Testseq_length[i]])
-						for j in range(50):
-							X_batch = TestData[i].reshape(1, n_steps, n_inputs)
-							y_pred = sess.run(outputs_Last, feed_dict={X: X_batch , seq_length:seq ,keep_prob:1.0})
-							# print (i , j , y_pred.flatten()[0] , interval_25 , interval_75)
-							Output[i*50+j,0] = RID[i]
-							Output[i*50+j,1] =  y_pred.flatten()[0]
-							if( (y_pred.flatten()[0] - interval_25) >0):
-								Output[i*50+j,2] =  y_pred.flatten()[0] - interval_25
-							else:
-								Output[i*50+j,2] =  y_pred.flatten()[0]
-							Output[i*50+j,3] =  y_pred.flatten()[0] + interval_75
-
-							if(seq[0]<n_steps):
-								TestData[i ,seq[0],0] =Output[i*50+j,1]
-								for ind in range(1,n_inputs):
-									TestData[i , seq[0],ind] = TestData[i ,seq[0]-1,ind]
-								seq[0]+=1
-
-							else:
-								np.roll(TestData[i], -1, axis=0)
-								TestData[i] =np.roll(TestData[i], -1, axis=0)
-								TestData[i , -1,0] = Output[i*50+j,1]
-								for ind in range(1,n_inputs):
-										# print(TestData[i , -1,ind])
-										TestData[i , -1,ind] = TestData[i ,-2,ind]
-
-				df = DataFrame(Output,columns=["RID" , TargetName , "-25" , "+75"])
-				df.to_csv(Loc+'.csv',index=False)
-			elif DS==2:
-				Output = np.zeros((TestData.shape[0] , 24))
-				for i in range(TestData.shape[0]):
-					seq = np.array([Testseq_length[i]])
-				# for i in range(1):
-					for j in range (24):
-
-						
-						X_batch = TestData[i].reshape(1, n_steps, n_inputs)
-						# print(X_batch)
-
-						y_pred = sess.run(outputs_Last, feed_dict={X: X_batch,seq_length:seq , keep_prob:1.0})
-						Output[i,j] = y_pred.flatten()[0]
-						np.roll(TestData[i], -1, axis=0)
-						TestData[i] =np.roll(TestData[i], -1, axis=0)
-						TestData[i , -1,0] = Output[i,j]
-						# print("before" , TestData[i , -2,1:])
-						if(hasMonth):
-							TestData[i , -1,1:13] = getNextMonth(TestData[i , -2,1:13])
-							if(Bias==None):
-								TestData[i , -1,13:] = TestData[i , -2,13:]
-							else:
-								b_t = n_steps/(j+n_steps)
-								TestData[i , -1,13:] =  b_t*TestData[i , -2,13:]+ (1-b_t)*Bias[1:]
+			Output = np.zeros((TestData.shape[0] , 24))
+			for i in range(TestData.shape[0]):
+				seq = np.array([Testseq_length[i]])
+				for j in range (24):
+					X_batch = TestData[i].reshape(1, n_steps, n_inputs)
+					y_pred = sess.run(outputs_Last, feed_dict={X: X_batch,seq_length:seq , keep_prob:1.0})
+					Output[i,j] = y_pred.flatten()[0]
+					np.roll(TestData[i], -1, axis=0)
+					TestData[i] =np.roll(TestData[i], -1, axis=0)
+					TestData[i , -1,0] = Output[i,j]
+					if(hasMonth):
+						TestData[i , -1,1:13] = getNextMonth(TestData[i , -2,1:13])
+						if(Bias==None):
+							TestData[i , -1,13:] = TestData[i , -2,13:]
+						else:
+							b_t = n_steps/(j+n_steps)
+							TestData[i , -1,13:] =  b_t*TestData[i , -2,13:]+ (1-b_t)*Bias[1:]
 
 
 
