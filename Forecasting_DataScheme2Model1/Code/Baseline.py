@@ -1,3 +1,4 @@
+
 from pandas import DataFrame
 from pandas import read_csv
 import random
@@ -103,6 +104,9 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 
 
 	outputs, states = tf.nn.dynamic_rnn(multi_cell, X, dtype=tf.float32, sequence_length=seq_length)
+	# added by Zhe
+	print(outputs[:,:,0].get_shape())
+	
 	rnn_outputs = tf.nn.dropout(outputs, keep_prob)
 	loss = loss_function(y, rnn_outputs,seq_length,alpha)
 	y_Last = last_relevant(y, seq_length)
@@ -127,6 +131,20 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 			y_Last_ = y_Last.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
 			outputs_Last_ = outputs_Last.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})
 			print("Epoch", epoch, "Train MAE =", '{0:.20f}'.format(acc_train) )
+			# added by Zhe
+		# 	print(outputs.get_shape())
+		# cols=[]
+		# hidden_states = outputs.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})[:, :, 0]
+		# num_steps = hidden_states.shape[1]
+
+		# for i in range(1,num_steps + 1):
+		# 	cols.append("steps_" +  str(i))
+		# print(type(hidden_states))
+		# # print(outputs.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0}).shape)
+		# df = DataFrame(hidden_states,columns=cols)
+		# df.to_csv(Loc+OutputFile+'.csv',index=False)
+		#################
+
 		saver.save(sess, Model_Loc+OutputFile +"LSTM_model")
 		if testing:
 			Output = np.zeros((TestData.shape[0] , 24))
@@ -150,11 +168,24 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 
 
 
-				cols=[]
-				for i in range(1,25):
-					cols.append("M_"+  str(i))
-				df = DataFrame(Output,columns=cols)
-				df.to_csv(Loc+OutputFile+'.csv',index=False)
+				# cols=[]
+				# for i in range(1,25):
+				# 	cols.append("M_"+  str(i))
+				# df = DataFrame(Output,columns=cols)
+				# df.to_csv(Loc+OutputFile+'.csv',index=False)
 
+				#################
+				# added by Zhe
+				cols=[]
+				hidden_states = outputs.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})[:, :, 0]
+				num_steps = hidden_states.shape[1]
+
+				for i in range(1,num_steps + 1):
+					cols.append("steps_" +  str(i))
+				print(hidden_states.shape)
+				df = DataFrame(hidden_states,columns=cols)
+				df.to_csv(Loc+OutputFile+'.csv',index=False)
+				print("Done!")
+				#################
 
 

@@ -16,8 +16,8 @@ TrainData , TrainOutput , Trainseq_length ,  TestData, Testseq_length , RID = Mo
 
 print(Testseq_length)
 
-Baseline_LSTM('BL_500_new' , TrainData , TrainOutput , Trainseq_length ,  TestData, Testseq_length , 
- 	learning_rate = 0.0001,n_neurons=64, n_layers = 2 , alpha=0.25,n_epochs=500,  trainKeepProb = 1.0, DS = 2 ,  testing=True)
+Baseline_LSTM('BL_500_hidden_states_testing' , TrainData , TrainOutput , Trainseq_length ,  TestData, Testseq_length , 
+ 	learning_rate = 0.0001,n_neurons=64, n_layers = 2 , alpha=0.25,n_epochs=500,  trainKeepProb = 1.0, DS = 2 ,  testing=True) # change testing to False for now
 
 
 t1 = time.time()
