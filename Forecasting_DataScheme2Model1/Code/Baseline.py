@@ -148,6 +148,11 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 		saver.save(sess, Model_Loc+OutputFile +"LSTM_model")
 		if testing:
 			Output = np.zeros((TestData.shape[0] , 24))
+			# added by Zhe
+			# there are two cell states, we save both of them separately
+			cell_states_1 = np.zeros((TestData.shape[0] , 24))
+			cell_states_2 = np.zeros((TestData.shape[0] , 24))
+
 			for i in range(TestData.shape[0]):
 				seq = np.array([Testseq_length[i]])
 				for j in range (24):
@@ -165,26 +170,24 @@ def LSTM(OutputFile  , X_, Y_,Trainseq_length, TestData , Testseq_length ,
 							b_t = n_steps/(j+n_steps)
 							TestData[i , -1,13:] =  b_t*TestData[i , -2,13:]+ (1-b_t)*Bias[1:]
 
-
-
+					#################
+				# added by Zhe
+					cell_states_1[i, j] = states[0][0].eval(feed_dict={X: X_batch,seq_length:seq , keep_prob:1.0})[0, j]
+					cell_states_2[i, j] = states[1][0].eval(feed_dict={X: X_batch,seq_length:seq , keep_prob:1.0})[0, j]
 
 				# cols=[]
 				# for i in range(1,25):
 				# 	cols.append("M_"+  str(i))
 				# df = DataFrame(Output,columns=cols)
 				# df.to_csv(Loc+OutputFile+'.csv',index=False)
-
-				#################
-				# added by Zhe
+				
 				cols=[]
-				hidden_states = outputs.eval(feed_dict={X: X_, y: Y_  ,  seq_length:Trainseq_length ,keep_prob:1.0})[:, :, 0]
-				num_steps = hidden_states.shape[1]
-
-				for i in range(1,num_steps + 1):
+				for i in range(1,25):
 					cols.append("steps_" +  str(i))
-				print(hidden_states.shape)
-				df = DataFrame(hidden_states,columns=cols)
-				df.to_csv(Loc+OutputFile+'.csv',index=False)
+				df_1 = DataFrame(cell_states_1, columns=cols)
+				df_2 = DataFrame(cell_states_2, columns=cols)
+				df_1.to_csv(Loc+OutputFile+'_cell_1_testing.csv',index=False)
+				df_1.to_csv(Loc+OutputFile+'_cell_2_testing.csv',index=False)
 				print("Done!")
 				#################
 
